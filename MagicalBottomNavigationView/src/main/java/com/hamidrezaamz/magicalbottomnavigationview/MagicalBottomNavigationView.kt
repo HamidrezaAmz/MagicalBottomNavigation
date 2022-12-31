@@ -10,12 +10,14 @@ import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companio
 import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companion.radius
 import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companion.showControllerPoints
 
+
 private const val TAG = "MagicalBottomNavigation"
 
 class MagicalBottomNavigationView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : BottomNavigationView(context, attrs, defStyleAttr) {
 
+    private var mirrosMatrix = Matrix()
     private val mPath: Path
     private val mPaint: Paint
 
@@ -25,7 +27,7 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
     private val mFirstCurveControlPoint1 = Point()
     private val mFirstCurveControlPoint2 = Point()
 
-    //the coordinates of the second curve
+    // the coordinates of the second curve
     private var mSecondCurveStartPoint = Point()
     private val mSecondCurveEndPoint = Point()
     private val mSecondCurveControlPoint1 = Point()
@@ -55,15 +57,11 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
         itemIconTintList = null
     }
 
-    override fun setOnItemReselectedListener(listener: OnItemReselectedListener?) {
-        super.setOnItemReselectedListener(listener)
-    }
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         initPoints()
         drawShape()
-
+        checkNeedTransform()
         mPaint.color = Color.WHITE
         canvas?.drawPath(mPath, mPaint)
 
@@ -89,8 +87,17 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
             )
         }
 
-        // canvas?.rotate(2.0f, -1.0f, 0.0f)
+    }
 
+    private fun checkNeedTransform() {
+        if (getSelectionItemPosition() == 3 || getSelectionItemPosition() == 4) {
+            val mMatrix = Matrix()
+            val bounds = RectF()
+            mPath.computeBounds(bounds, true)
+            mMatrix.postRotate(180f, bounds.centerX(), bounds.centerY())
+            mMatrix.postScale(1.0f, -1.0f, bounds.centerX(), bounds.centerY())
+            mPath.transform(mMatrix)
+        }
     }
 
     private fun initPoints() {
@@ -367,29 +374,24 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
     }
 
     private fun drawShape3th() {
-        // get width and height of navigation bar
-        // Navigation bar bounds (width & height)
-        mNavigationBarWidth = width
-        mNavigationBarHeight = height
-
         // the coordinates (x,y) of the start point before curve
-        mFirstCurveStartPoint.set(x6, y1)
+        mFirstCurveStartPoint.set(x1, y1)
         // the coordinates (x,y) of the end point after curve
-        mFirstCurveEndPoint.set(x6 - x2 / 2, y2)
+        mFirstCurveEndPoint.set(x2 + x2 / 2, y2)
 
         // same thing for the second curve
-        mSecondCurveStartPoint.set(x6 - x2 / 2, y2)
-        mSecondCurveEndPoint.set(x1, y1)
+        mSecondCurveStartPoint.set(x2 + x2 / 2, y2)
+        mSecondCurveEndPoint.set(x6, y1)
 
         // First Curve Control Point: RED
         mFirstCurveControlPoint1.set(
-            mFirstCurveStartPoint.x + mNavigationBarWidth - mNavigationBarWidth / 3,
-            mFirstCurveStartPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
+            mFirstCurveStartPoint.x + x2, mFirstCurveStartPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
         )
         // First Curve Control Point: GREEN
         mFirstCurveControlPoint2.set(
-            mFirstCurveEndPoint.x + mNavigationBarWidth / 8, mFirstCurveEndPoint.y - mNavigationBarHeight / 10
+            mFirstCurveEndPoint.x - mFirstCurveEndPoint.x / 18, mFirstCurveEndPoint.y /*- mNavigationBarHeight / 12*/
         )
+
         // Second Curve Control Point: BLUE
         mSecondCurveControlPoint1.set(
             mSecondCurveStartPoint.x + radius * 2 - radius, mSecondCurveStartPoint.y
@@ -487,6 +489,7 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
 
             close()
         }
+
     }
 
     private fun getSelectionItemPosition(): Int {
