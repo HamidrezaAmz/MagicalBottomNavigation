@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MagicalBottomNavigation"
         tools:targetApi="31">
+
         <activity
             android:name=".presenter.activity.MainActivity"
             android:exported="true">
