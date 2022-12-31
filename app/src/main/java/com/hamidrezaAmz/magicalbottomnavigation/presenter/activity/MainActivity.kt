@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         magicalBottomNavigationView.setOnItemReselectedListener {
             // ...
         }
+        magicalBottomNavigationView.selectedItemId = R.id.action_favorites
     }
 
 }

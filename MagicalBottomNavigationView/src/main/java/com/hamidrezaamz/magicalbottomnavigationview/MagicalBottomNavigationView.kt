@@ -3,12 +3,12 @@ package com.hamidrezaamz.magicalbottomnavigationview
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
-import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.core.view.get
 import androidx.core.view.size
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companion.patch
+import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companion.radius
+import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companion.showControllerPoints
 
 private const val TAG = "MagicalBottomNavigation"
 
@@ -18,9 +18,6 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
 
     private val mPath: Path
     private val mPaint: Paint
-
-    /** the radius represent the radius of the fab button  */
-    private var radius: Int = 0
 
     // the coordinates of the first curve
     private val mFirstCurveStartPoint = Point()
@@ -37,6 +34,13 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
     // Navigation bar bounds (width & height)
     private var mNavigationBarWidth: Int = 0
     private var mNavigationBarHeight: Int = 0
+
+    // controller points
+    var x1 = -1
+    var x2 = -1
+    var x6 = -1
+    var y1 = -1
+    var y2 = -1
 
     init {
         // radius of fab button
@@ -57,26 +61,49 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+        initPoints()
         drawShape()
 
         mPaint.color = Color.WHITE
         canvas?.drawPath(mPath, mPaint)
 
-        mPaint.color = Color.RED
-        canvas?.drawCircle(
-            mFirstCurveControlPoint1.x.toFloat(),
-            mFirstCurveControlPoint1.y.toFloat(),
-            (5).toFloat(),
-            mPaint
-        )
+        if (showControllerPoints) {
+            mPaint.color = Color.RED
+            canvas?.drawCircle(
+                mFirstCurveControlPoint1.x.toFloat(), mFirstCurveControlPoint1.y.toFloat(), (5).toFloat(), mPaint
+            )
 
-        mPaint.color = Color.GREEN
-        canvas?.drawCircle(
-            mFirstCurveControlPoint2.x.toFloat(),
-            mFirstCurveControlPoint2.y.toFloat(),
-            (5).toFloat(),
-            mPaint
-        )
+            mPaint.color = Color.GREEN
+            canvas?.drawCircle(
+                mFirstCurveControlPoint2.x.toFloat(), mFirstCurveControlPoint2.y.toFloat(), (5).toFloat(), mPaint
+            )
+
+            mPaint.color = Color.BLUE
+            canvas?.drawCircle(
+                mSecondCurveControlPoint1.x.toFloat(), mSecondCurveControlPoint1.y.toFloat(), (5).toFloat(), mPaint
+            )
+
+            mPaint.color = Color.MAGENTA
+            canvas?.drawCircle(
+                mSecondCurveControlPoint2.x.toFloat(), mSecondCurveControlPoint2.y.toFloat(), (5).toFloat(), mPaint
+            )
+        }
+
+        // canvas?.rotate(2.0f, -1.0f, 0.0f)
+
+    }
+
+    private fun initPoints() {
+        // get width and height of navigation bar
+        // Navigation bar bounds (width & height)
+        mNavigationBarWidth = width
+        mNavigationBarHeight = height
+        // controller points
+        x1 = 0
+        x2 = mNavigationBarWidth / 5
+        x6 = mNavigationBarWidth
+        y1 = 0
+        y2 = mNavigationBarHeight / 2
     }
 
     private fun templatePointsGenerator() {
@@ -134,47 +161,56 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
         }
     }
 
-    // draw shape for more item
+    private fun isRTL(): Boolean {
+        return resources.getBoolean(R.bool.is_right_to_left)
+    }
+
     private fun drawShape() {
-        when (getSelectionItemPosition()) {
-            0 -> drawShape5th()
-            1 -> drawShape4th()
-            2 -> drawShape3th()
-            3 -> drawShape2th()
-            4 -> drawShape1th()
-            else -> {}
+        if (isRTL()) {
+            when (getSelectionItemPosition()) {
+                0 -> drawShape4th()
+                1 -> drawShape3th()
+                2 -> drawShape2th()
+                3 -> drawShape1th()
+                4 -> drawShape0th()
+            }
+        } else {
+            when (getSelectionItemPosition()) {
+                0 -> drawShape0th()
+                1 -> drawShape1th()
+                2 -> drawShape2th()
+                3 -> drawShape3th()
+                4 -> drawShape4th()
+            }
         }
     }
 
-    private fun drawShape5th() {
-        // get width and height of navigation bar
-        // Navigation bar bounds (width & height)
-        mNavigationBarWidth = width
-        mNavigationBarHeight = height
-
+    private fun drawShape0th() {
         // the coordinates (x,y) of the start point before curve
-        mFirstCurveStartPoint.set(0, 0)
+        mFirstCurveStartPoint.set(x1, y1)
         // the coordinates (x,y) of the end point after curve
-        mFirstCurveEndPoint.set(mNavigationBarWidth / 5, mNavigationBarHeight / 2)
+        mFirstCurveEndPoint.set(x2 / 2, y2)
 
         // same thing for the second curve
-        mSecondCurveStartPoint = mFirstCurveEndPoint
-        mSecondCurveEndPoint.set(mNavigationBarWidth, 0)
+        mSecondCurveStartPoint.set(x2 / 2, y2)
+        mSecondCurveEndPoint.set(x6, y1)
 
-        // the coordinates (x,y)  of the 1st control point on a cubic curve
+        // First Curve Control Point: RED
         mFirstCurveControlPoint1.set(
-            mFirstCurveStartPoint.x + radius / 2, mFirstCurveStartPoint.y + radius
+            mFirstCurveStartPoint.x + x2 / 4, mFirstCurveStartPoint.y + y2
         )
-        // the coordinates (x,y)  of the 2nd control point on a cubic curve
+        // First Curve Control Point: GREEN
         mFirstCurveControlPoint2.set(
-            mFirstCurveEndPoint.x - radius / 6, mFirstCurveEndPoint.y
+            mFirstCurveEndPoint.x, mFirstCurveEndPoint.y
         )
 
+        // Second Curve Control Point: BLUE
         mSecondCurveControlPoint1.set(
-            mSecondCurveStartPoint.x + radius * 2 - radius, mSecondCurveStartPoint.y
+            mSecondCurveStartPoint.x + x2, mSecondCurveStartPoint.y - y2 / 3
         )
+        // Second Curve Control Point: MAGENTA
         mSecondCurveControlPoint2.set(
-            mSecondCurveEndPoint.x - (radius + radius / 4), mSecondCurveEndPoint.y
+            mSecondCurveEndPoint.x - patch, mSecondCurveEndPoint.y
         )
 
         mPath.apply {
@@ -208,99 +244,30 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
         }
     }
 
-    private fun drawShape4th() {
-        // get width and height of navigation bar
-        // Navigation bar bounds (width & height)
-        mNavigationBarWidth = width
-        mNavigationBarHeight = height
-
+    private fun drawShape1th() {
         // the coordinates (x,y) of the start point before curve
-        mFirstCurveStartPoint.set(0, 0)
+        mFirstCurveStartPoint.set(x1, y1)
         // the coordinates (x,y) of the end point after curve
-        mFirstCurveEndPoint.set(mNavigationBarWidth / 3, mNavigationBarHeight / 3)
+        mFirstCurveEndPoint.set(x2 + x2 / 2, y2)
 
         // same thing for the second curve
-        mSecondCurveStartPoint = mFirstCurveEndPoint
-        mSecondCurveEndPoint.set(mNavigationBarWidth, 0)
+        mSecondCurveStartPoint.set(x2 + x2 / 2, y2)
+        mSecondCurveEndPoint.set(x6, y1)
 
-        // the coordinates (x,y)  of the 1st control point on a cubic curve
+        // First Curve Control Point: RED
         mFirstCurveControlPoint1.set(
-            mFirstCurveStartPoint.x + mNavigationBarWidth / 4,
-            mFirstCurveStartPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
+            mFirstCurveStartPoint.x + x2, mFirstCurveStartPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
         )
-        // the coordinates (x,y)  of the 2nd control point on a cubic curve
+        // First Curve Control Point: GREEN
         mFirstCurveControlPoint2.set(
-            mFirstCurveEndPoint.x - mFirstCurveEndPoint.x / 18,
-            mFirstCurveEndPoint.y /*- mNavigationBarHeight / 12*/
+            mFirstCurveEndPoint.x - mFirstCurveEndPoint.x / 18, mFirstCurveEndPoint.y /*- mNavigationBarHeight / 12*/
         )
 
+        // Second Curve Control Point: BLUE
         mSecondCurveControlPoint1.set(
             mSecondCurveStartPoint.x + radius * 2 - radius, mSecondCurveStartPoint.y
         )
-        mSecondCurveControlPoint2.set(
-            mSecondCurveEndPoint.x - (radius + radius / 4), mSecondCurveEndPoint.y
-        )
-
-        mPath.apply {
-            reset()
-            moveTo(0f, 0f)
-            lineTo(mFirstCurveStartPoint.x.toFloat(), mFirstCurveStartPoint.y.toFloat())
-
-            cubicTo(
-                mFirstCurveControlPoint1.x.toFloat(),
-                mFirstCurveControlPoint1.y.toFloat(),
-                mFirstCurveControlPoint2.x.toFloat(),
-                mFirstCurveControlPoint2.y.toFloat(),
-                mFirstCurveEndPoint.x.toFloat(),
-                mFirstCurveEndPoint.y.toFloat()
-            )
-
-            cubicTo(
-                mSecondCurveControlPoint1.x.toFloat(),
-                mSecondCurveControlPoint1.y.toFloat(),
-                mSecondCurveControlPoint2.x.toFloat(),
-                mSecondCurveControlPoint2.y.toFloat(),
-                mSecondCurveEndPoint.x.toFloat(),
-                mSecondCurveEndPoint.y.toFloat()
-            )
-
-            lineTo(mNavigationBarWidth.toFloat(), 0f)
-            lineTo(mNavigationBarWidth.toFloat(), mNavigationBarHeight.toFloat())
-            lineTo(0f, mNavigationBarHeight.toFloat())
-
-            close()
-        }
-    }
-
-    private fun drawShape3th() {
-        // get width and height of navigation bar
-        // Navigation bar bounds (width & height)
-        mNavigationBarWidth = width
-        mNavigationBarHeight = height
-
-        // the coordinates (x,y) of the start point before curve
-        mFirstCurveStartPoint.set(0, 0)
-        // the coordinates (x,y) of the end point after curve
-        mFirstCurveEndPoint.set(mNavigationBarWidth / 2, mNavigationBarHeight / 2)
-
-        // same thing for the second curve
-        mSecondCurveStartPoint = mFirstCurveEndPoint
-        mSecondCurveEndPoint.set(mNavigationBarWidth, 0)
-
-        // the coordinates (x,y)  of the 1st control point on a cubic curve
-        mFirstCurveControlPoint1.set(
-            mFirstCurveStartPoint.x + mNavigationBarWidth / 2,
-            mFirstCurveStartPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
-        )
-        // the coordinates (x,y)  of the 2nd control point on a cubic curve
-        mFirstCurveControlPoint2.set(
-            mFirstCurveEndPoint.x + mNavigationBarWidth / 2,
-            mFirstCurveEndPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
-        )
-
-        mSecondCurveControlPoint1.set(
-            mSecondCurveStartPoint.x + radius * 2 - radius, mSecondCurveStartPoint.y
-        )
+        // Second Curve Control Point: MAGENTA
         mSecondCurveControlPoint2.set(
             mSecondCurveEndPoint.x - (radius + radius / 4), mSecondCurveEndPoint.y
         )
@@ -343,30 +310,27 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
         mNavigationBarHeight = height
 
         // the coordinates (x,y) of the start point before curve
-        mFirstCurveStartPoint.set(0, 0)
+        mFirstCurveStartPoint.set(x1, y1)
         // the coordinates (x,y) of the end point after curve
-        mFirstCurveEndPoint.set(
-            mNavigationBarWidth - mNavigationBarWidth / 3, mNavigationBarHeight / 3
-        )
+        mFirstCurveEndPoint.set(2 * x2, y2)
 
         // same thing for the second curve
-        mSecondCurveStartPoint = mFirstCurveEndPoint
-        mSecondCurveEndPoint.set(mNavigationBarWidth, 0)
+        mSecondCurveStartPoint.set(2 * x2, y2)
+        mSecondCurveEndPoint.set(x6, y1)
 
-        // the coordinates (x,y)  of the 1st control point on a cubic curve
+        // First Curve Control Point: RED
         mFirstCurveControlPoint1.set(
-            mFirstCurveStartPoint.x + mNavigationBarWidth - mNavigationBarWidth / 3,
-            mFirstCurveStartPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
+            mFirstCurveStartPoint.x + 2 * x2, mFirstCurveStartPoint.y + y2
         )
-        // the coordinates (x,y)  of the 2nd control point on a cubic curve
+        // First Curve Control Point: GREEN
         mFirstCurveControlPoint2.set(
-            mFirstCurveEndPoint.x + mNavigationBarWidth / 8,
-            mFirstCurveEndPoint.y - mNavigationBarHeight / 10
+            mFirstCurveEndPoint.x + 2 * x2, mFirstCurveStartPoint.y + y2
         )
-
+        // Second Curve Control Point: BLUE
         mSecondCurveControlPoint1.set(
             mSecondCurveStartPoint.x + radius * 2 - radius, mSecondCurveStartPoint.y
         )
+        // Second Curve Control Point: MAGENTA
         mSecondCurveControlPoint2.set(
             mSecondCurveEndPoint.x - (radius + radius / 4), mSecondCurveEndPoint.y
         )
@@ -402,8 +366,127 @@ class MagicalBottomNavigationView @JvmOverloads constructor(
         }
     }
 
-    private fun drawShape1th() {
+    private fun drawShape3th() {
+        // get width and height of navigation bar
+        // Navigation bar bounds (width & height)
+        mNavigationBarWidth = width
+        mNavigationBarHeight = height
 
+        // the coordinates (x,y) of the start point before curve
+        mFirstCurveStartPoint.set(x6, y1)
+        // the coordinates (x,y) of the end point after curve
+        mFirstCurveEndPoint.set(x6 - x2 / 2, y2)
+
+        // same thing for the second curve
+        mSecondCurveStartPoint.set(x6 - x2 / 2, y2)
+        mSecondCurveEndPoint.set(x1, y1)
+
+        // First Curve Control Point: RED
+        mFirstCurveControlPoint1.set(
+            mFirstCurveStartPoint.x + mNavigationBarWidth - mNavigationBarWidth / 3,
+            mFirstCurveStartPoint.y + mNavigationBarHeight - mNavigationBarHeight / 2
+        )
+        // First Curve Control Point: GREEN
+        mFirstCurveControlPoint2.set(
+            mFirstCurveEndPoint.x + mNavigationBarWidth / 8, mFirstCurveEndPoint.y - mNavigationBarHeight / 10
+        )
+        // Second Curve Control Point: BLUE
+        mSecondCurveControlPoint1.set(
+            mSecondCurveStartPoint.x + radius * 2 - radius, mSecondCurveStartPoint.y
+        )
+        // Second Curve Control Point: MAGENTA
+        mSecondCurveControlPoint2.set(
+            mSecondCurveEndPoint.x - (radius + radius / 4), mSecondCurveEndPoint.y
+        )
+
+        mPath.apply {
+            reset()
+            moveTo(0f, 0f)
+            lineTo(mFirstCurveStartPoint.x.toFloat(), mFirstCurveStartPoint.y.toFloat())
+
+            cubicTo(
+                mFirstCurveControlPoint1.x.toFloat(),
+                mFirstCurveControlPoint1.y.toFloat(),
+                mFirstCurveControlPoint2.x.toFloat(),
+                mFirstCurveControlPoint2.y.toFloat(),
+                mFirstCurveEndPoint.x.toFloat(),
+                mFirstCurveEndPoint.y.toFloat()
+            )
+
+            cubicTo(
+                mSecondCurveControlPoint1.x.toFloat(),
+                mSecondCurveControlPoint1.y.toFloat(),
+                mSecondCurveControlPoint2.x.toFloat(),
+                mSecondCurveControlPoint2.y.toFloat(),
+                mSecondCurveEndPoint.x.toFloat(),
+                mSecondCurveEndPoint.y.toFloat()
+            )
+
+            lineTo(mNavigationBarWidth.toFloat(), 0f)
+            lineTo(mNavigationBarWidth.toFloat(), mNavigationBarHeight.toFloat())
+            lineTo(0f, mNavigationBarHeight.toFloat())
+
+            close()
+        }
+    }
+
+    private fun drawShape4th() {
+        // the coordinates (x,y) of the start point before curve
+        mFirstCurveStartPoint.set(x1, y1)
+        // the coordinates (x,y) of the end point after curve
+        mFirstCurveEndPoint.set(x2 / 2, y2)
+
+        // same thing for the second curve
+        mSecondCurveStartPoint.set(x2 / 2, y2)
+        mSecondCurveEndPoint.set(x6, y1)
+
+        // First Curve Control Point: RED
+        mFirstCurveControlPoint1.set(
+            mFirstCurveStartPoint.x + x2 / 4, mFirstCurveStartPoint.y + y2
+        )
+        // First Curve Control Point: GREEN
+        mFirstCurveControlPoint2.set(
+            mFirstCurveEndPoint.x, mFirstCurveEndPoint.y
+        )
+
+        // Second Curve Control Point: BLUE
+        mSecondCurveControlPoint1.set(
+            mSecondCurveStartPoint.x + x2, mSecondCurveStartPoint.y - y2 / 3
+        )
+        // Second Curve Control Point: MAGENTA
+        mSecondCurveControlPoint2.set(
+            mSecondCurveEndPoint.x - patch, mSecondCurveEndPoint.y
+        )
+
+        mPath.apply {
+            reset()
+            moveTo(0f, 0f)
+            lineTo(mFirstCurveStartPoint.x.toFloat(), mFirstCurveStartPoint.y.toFloat())
+
+            cubicTo(
+                mFirstCurveControlPoint1.x.toFloat(),
+                mFirstCurveControlPoint1.y.toFloat(),
+                mFirstCurveControlPoint2.x.toFloat(),
+                mFirstCurveControlPoint2.y.toFloat(),
+                mFirstCurveEndPoint.x.toFloat(),
+                mFirstCurveEndPoint.y.toFloat()
+            )
+
+            cubicTo(
+                mSecondCurveControlPoint1.x.toFloat(),
+                mSecondCurveControlPoint1.y.toFloat(),
+                mSecondCurveControlPoint2.x.toFloat(),
+                mSecondCurveControlPoint2.y.toFloat(),
+                mSecondCurveEndPoint.x.toFloat(),
+                mSecondCurveEndPoint.y.toFloat()
+            )
+
+            lineTo(mNavigationBarWidth.toFloat(), 0f)
+            lineTo(mNavigationBarWidth.toFloat(), mNavigationBarHeight.toFloat())
+            lineTo(0f, mNavigationBarHeight.toFloat())
+
+            close()
+        }
     }
 
     private fun getSelectionItemPosition(): Int {
