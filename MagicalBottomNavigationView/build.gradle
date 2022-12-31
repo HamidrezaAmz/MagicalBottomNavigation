@@ -6,11 +6,11 @@ plugins {
 
 android {
     namespace 'com.hamidrezaamz.magicalbottomnavigationview'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         minSdk 21
-        targetSdk 32
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -56,7 +56,7 @@ publishing {
         release(MavenPublication) {
             groupId = 'com.github.hamidrezaamz'
             artifactId = 'MagicalBottomNavigation'
-            version = '1.0.4'
+            version = '1.0.5'
 
             afterEvaluate {
                 from components.release
