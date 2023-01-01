@@ -62,6 +62,7 @@ class MagicalBNV @JvmOverloads constructor(
         initPoints()
         drawShape()
         checkNeedTransform()
+
         mPaint.color = Color.WHITE
         canvas?.drawPath(mPath, mPaint)
 
@@ -90,7 +91,14 @@ class MagicalBNV @JvmOverloads constructor(
     }
 
     private fun checkNeedTransform() {
-        if (getSelectionItemPosition() == 3 || getSelectionItemPosition() == 4) {
+        if (isRTL() && (getSelectionItemPosition() == 0 || getSelectionItemPosition() == 1)) {
+            val mMatrix = Matrix()
+            val bounds = RectF()
+            mPath.computeBounds(bounds, true)
+            mMatrix.postRotate(180f, bounds.centerX(), bounds.centerY())
+            mMatrix.postScale(1.0f, -1.0f, bounds.centerX(), bounds.centerY())
+            mPath.transform(mMatrix)
+        } else if (isRTL().not() && (getSelectionItemPosition() == 3 || getSelectionItemPosition() == 4)) {
             val mMatrix = Matrix()
             val bounds = RectF()
             mPath.computeBounds(bounds, true)
@@ -173,22 +181,12 @@ class MagicalBNV @JvmOverloads constructor(
     }
 
     private fun drawShape() {
-        if (isRTL()) {
-            when (getSelectionItemPosition()) {
-                0 -> drawShape4th()
-                1 -> drawShape3th()
-                2 -> drawShape2th()
-                3 -> drawShape1th()
-                4 -> drawShape0th()
-            }
-        } else {
-            when (getSelectionItemPosition()) {
-                0 -> drawShape0th()
-                1 -> drawShape1th()
-                2 -> drawShape2th()
-                3 -> drawShape3th()
-                4 -> drawShape4th()
-            }
+        when (getSelectionItemPosition()) {
+            0 -> drawShape4th()
+            1 -> drawShape3th()
+            2 -> drawShape2th()
+            3 -> drawShape1th()
+            4 -> drawShape0th()
         }
     }
 
