@@ -20,6 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-keep class com.hamidrezaamz.**
+-keep class com.hamidrezaamz.*
 -keep class com.hamidrezaamz.magicalbottomnavigationview { *; }
 -keepattributes Signature
 -keepattributes Exceptions
