@@ -5,7 +5,7 @@ plugins {
 
 android {
 
-    signingConfigs {
+   /* signingConfigs {
         release {
             storeFile file('/Users/reza/AndroidStudioProjects/MagicalBottomNavigation/data/magicalbottomnav')
             storePassword '123456'
@@ -18,7 +18,8 @@ android {
             keyAlias 'MagicalBottomNav'
             keyPassword '123456'
         }
-    }
+    }*/
+
     namespace 'com.hamidrezaAmz.magicalbottomnavigation'
     compileSdk 32
 

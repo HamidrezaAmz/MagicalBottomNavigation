@@ -46,7 +46,7 @@ publishing {
         release(MavenPublication) {
             groupId = 'com.github.hamidrezaamz'
             artifactId = 'MagicalBottomNavigation'
-            version = '1.2.5'
+            version = '1.2.6'
 
             afterEvaluate {
                 from components.release
