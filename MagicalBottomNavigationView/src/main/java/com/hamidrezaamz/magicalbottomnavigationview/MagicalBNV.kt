@@ -12,7 +12,7 @@ import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companio
 
 private const val TAG = "MagicalBottomNavigation"
 
-class MagicalBottomNavigation @JvmOverloads constructor(
+class MagicalBNV @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

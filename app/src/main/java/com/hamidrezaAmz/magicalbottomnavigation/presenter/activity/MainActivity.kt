@@ -6,7 +6,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import com.hamidrezaAmz.magicalbottomnavigation.R
-import com.hamidrezaamz.magicalbottomnavigationview.MagicalBottomNavigation
+import com.hamidrezaamz.magicalbottomnavigationview.MagicalBNV
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var showIconSwitch: SwitchCompat
 
-    lateinit var magicalBottomNavigation: MagicalBottomNavigation
+    lateinit var magicalBNV: MagicalBNV
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        magicalBottomNavigation = findViewById(R.id.magicalBottomNavigationView)
-        magicalBottomNavigation.setOnItemReselectedListener {
+        magicalBNV = findViewById(R.id.magicalBottomNavigationView)
+        magicalBNV.setOnItemReselectedListener {
             // ...
         }
-        magicalBottomNavigation.selectedItemId = R.id.action_more
+        magicalBNV.selectedItemId = R.id.action_more
     }
 
 }
