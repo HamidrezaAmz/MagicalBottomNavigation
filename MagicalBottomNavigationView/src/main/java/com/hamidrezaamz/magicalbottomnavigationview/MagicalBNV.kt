@@ -10,7 +10,7 @@ import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companio
 import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companion.radius
 import com.hamidrezaamz.magicalbottomnavigationview.common.PublicValues.Companion.showControllerPoints
 
-private const val TAG = "MagicalBottomNavigation"
+private const val TAG = "MagicalBNV"
 
 class MagicalBNV @JvmOverloads constructor(
     context: Context,

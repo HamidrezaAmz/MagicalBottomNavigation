@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+
     namespace 'com.hamidrezaamz.magicalbottomnavigationview'
     compileSdk 32
 
@@ -44,8 +45,8 @@ publishing {
     publications {
         release(MavenPublication) {
             groupId = 'com.github.hamidrezaamz'
-            artifactId = 'MagicalBottomNavigation'
-            version = '1.2.3'
+            artifactId = 'MagicalBNV'
+            version = '1.2.4'
 
             afterEvaluate {
                 from components.release

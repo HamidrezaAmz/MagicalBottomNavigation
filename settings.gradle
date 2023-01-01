@@ -15,5 +15,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "MagicalBottomNavigation"
+
 include ':app'
 include ':MagicalBottomNavigationView'
