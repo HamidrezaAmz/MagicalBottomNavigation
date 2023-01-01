@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.hamidrezaamz.magicalbottomnavigationview.MagicalBottomNavigationView
+    <com.hamidrezaamz.magicalbottomnavigationview.MagicalBottomNavigation
         android:id="@+id/magicalBottomNavigationView"
         android:layout_width="0dp"
         android:layout_height="70dp"

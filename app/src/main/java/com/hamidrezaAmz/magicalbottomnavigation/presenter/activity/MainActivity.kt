@@ -1,15 +1,12 @@
 package com.hamidrezaAmz.magicalbottomnavigation.presenter.activity
 
 import android.os.Bundle
-import android.widget.RadioGroup
-import android.widget.RadioGroup.OnCheckedChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.hamidrezaAmz.magicalbottomnavigation.R
-import com.hamidrezaamz.magicalbottomnavigationview.MagicalBottomNavigationView
+import com.hamidrezaamz.magicalbottomnavigationview.MagicalBottomNavigation
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var showIconSwitch: SwitchCompat
 
-    lateinit var magicalBottomNavigationView: MagicalBottomNavigationView
+    lateinit var magicalBottomNavigation: MagicalBottomNavigation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +39,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        magicalBottomNavigationView = findViewById(R.id.magicalBottomNavigationView)
-        magicalBottomNavigationView.setOnItemReselectedListener {
+        magicalBottomNavigation = findViewById(R.id.magicalBottomNavigationView)
+        magicalBottomNavigation.setOnItemReselectedListener {
             // ...
         }
-        magicalBottomNavigationView.selectedItemId = R.id.action_more
+        magicalBottomNavigation.selectedItemId = R.id.action_more
     }
 
 }
