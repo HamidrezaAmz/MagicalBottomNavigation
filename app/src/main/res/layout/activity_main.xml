@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/global_background_gradient"
+    android:background="@color/black"
     tools:context=".presenter.activity.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -55,7 +55,9 @@
         android:layout_height="70dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
+        app:itemBackground="@null"
         app:itemIconSize="48dp"
+        app:itemRippleColor="@null"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
